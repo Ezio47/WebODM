@@ -38,8 +38,8 @@ def new():
     filenames = []
     username = current_user.username
     label = request.form.get('label')
-    # if this sequence name doesn't exist
-    if label is not None and not Sequence.query.filter_by(label=label).first():
+    # if this sequence name doesn't exist TODO:see if we can filter by user as well?
+    if label is not None and not Sequence.query.filter_by(label=label, user_id=current_user.id).first():
         sequence = Sequence(label = label, user = current_user._get_current_object())
         for file in uploaded_files:
             # Check if the file is one of the allowed types/extensions
@@ -62,9 +62,9 @@ def new():
         return redirect(url_for('.sequence', label = sequence.label, user=username))
     return render_template('new_sequence.html', filenames=filenames)
 
-@main.route('/sequence/<user>/<label>', methods=['GET','POST'])
+@main.route('/sequence/<user>/<label>', methods=['GET'])
 @login_required
-def sequence(label, user):
+def sequence(user, label):
 # check if label exists, otherwise go to error sequence not found page
     if label == None:
         abort(404)
@@ -72,7 +72,7 @@ def sequence(label, user):
     photos = Photo.query.filter_by(sequence_id=seq.id).all() 
     return render_template('sequence.html', label=label, user=user, sequence=seq, photos=photos)
 
-@main.route('/photo/<username>/<label>/<filename>', methods=['GET','POST'])
+@main.route('/photo/<username>/<label>/<filename>', methods=['GET'])
 @login_required
 def photo(username, label, filename):
     if id == None:
@@ -80,3 +80,14 @@ def photo(username, label, filename):
     photo = Photo.query.filter_by(file=filename).first()
     filedir = current_app.config['UPLOAD_DEFAULT_DEST'] + username + '/' + label + '/' + photo.file
     return send_file(filedir, mimetype='image/jpg')
+
+@main.route('/sequence/<user>/<label>/delete', methods=['GET','POST'])
+@login_required
+def delete(user, label):
+    this_user = User.query.filter_by(username=user).first()
+    sequence = Sequence.query.filter_by(user_id=this_user.id, label=label).first()
+    if sequence is not None:
+        db.session.delete(sequence)
+        db.session.commit()
+    	return redirect(url_for('.index'))
+    return redirect(url_for('.sequence', label=sequence.label, user=sequence.user))
