@@ -27,8 +27,8 @@ In order to run the server, simply type `python manage.py runserver` and you sho
 
 ## Development Plans
 
-1. Add the sequence blueprint, basically a database view of the photos and ODM results.
-  * Needs an form for the upload/parameters
+1. ~~Add the sequence blueprint, basically a database view of the photos and ODM results.~~
+  * ~~Needs an form for the upload/parameters~~
 2. Finish adding user profile stuff, like password recovery, etc. 
 3. Email server
 4. Backend: 

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+
+{% block page_content %}
+<h1> {{ photo.file }} </h1>
+
+<img href="/app/uploads/{{ photo.file }}" />
+
+{% endblock %}

@@ -1,5 +1,8 @@
 *.py[cod]
 
+# uploaded files
+app/uploads
+
 # C extensions
 *.so
 

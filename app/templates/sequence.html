@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='scroll.css') }}" type="text/css"> 
+{% endblock %}
+
+{% block page_content %}
+
+<h1>{{ label }}</h1>
+<div class="row-fluid">
+    <div class="col-lg-12 col-md-10 ">
+        <div class="cover-container">
+            <!-- START PANEL -->
+            {% for photo in photos %}
+            <div class="cover-item" style="background-image: url('../../photo/{{ user }}/{{ label }}/{{ photo.file }}"></div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

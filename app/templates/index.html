@@ -1,2 +1,35 @@
 {% extends "base.html" %}
 
+
+{% block page_content %}
+
+<h1>Hi, {{ current_user.username or 'Stranger'}}!</h1>
+
+{% if sequences %}
+<div class="panel panel-default">
+  <!-- Default panel contents -->
+  <div class="panel-heading">Your Sequences</div>
+  <!-- Table -->
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>No. Photos</th>
+        <th>Date Uploaded</th>
+        <th>Date Completed</th>
+      </tr>
+    <tbody>
+      {% for sequence in sequences %}
+      <tr>
+        <td>{{ sequence.id }}</td>
+        <td><a href="{{ url_for('.sequence', label=sequence.label, user=current_user.username) }}">{{ sequence.label }}</a></td>
+        <td>{{ sequence.photos.count() }}</td>
+        <td>{{ sequence.timestamp }}</td>
+        <td>{{ sequence.completed }}</td>
+      </tr>
+      {% endfor %}
+  </table>
+</div>
+{% endif %}
+{% endblock %}

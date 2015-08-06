@@ -1,0 +1,18 @@
+{% extends "base.html" %} 
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}WebODM - New Sequence{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>New Sequence</h1>
+</div>
+<div class="col-md-4">    
+      <form action="new" method="post" enctype="multipart/form-data">
+        <input type="text" name="label" value="Label" /><br />
+        <input type="file" multiple="" name="file[]" class="span3" /><br />
+        <input type="submit" value="Upload"  class="span2">
+      </form>
+      </div>
+{% endblock %}
+
