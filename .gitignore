@@ -3,6 +3,9 @@
 # uploaded files
 app/uploads
 
+#coverage
+tmp
+
 # C extensions
 *.so
 

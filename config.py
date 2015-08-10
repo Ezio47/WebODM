@@ -30,6 +30,7 @@ class TestingConfig(Config):
     DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD')
     SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or \
         'postgresql://' + DATABASE_USERNAME + ':' + DATABASE_PASSWORD + '@localhost/test_webodm'
+    WTF_CSRF_ENABLED = False
 
 class ProductionConfig(Config):	
     DATABASE_USERNAME = os.environ.get('DATABASE_USERNAME')

@@ -2,6 +2,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask.ext.login import UserMixin, AnonymousUserMixin
 from . import db, login_manager
 from datetime import datetime
+from flask import current_app, request, url_for
 
 class Role(db.Model):
     __tablename__ = 'roles'

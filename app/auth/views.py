@@ -39,7 +39,7 @@ def logout():
 def change_password():
     form = PasswordChangeForm()
     if form.validate_on_submit():
-        if current_user.verify_password(form.new_password.data):
+        if current_user.verify_password(form.old_password.data):
             current_user.password = form.new_password.data
             db.session.add(current_user)
             flash('Your password has been updated.')
