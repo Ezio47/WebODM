@@ -8,6 +8,8 @@ from flask.ext.login import login_required, current_user
 from flask.ext.uploads import UploadSet
 from werkzeug import secure_filename
 from ..decorators import admin_required, permission_required
+from PIL import Image
+import shutil
 
 # Home Page
 @main.route('/', methods=['GET', 'POST'])
@@ -38,7 +40,7 @@ def new():
     filenames = []
     username = current_user.username
     label = request.form.get('label')
-    # if this sequence name doesn't exist TODO:see if we can filter by user as well?
+    # if this sequence name doesn't exist 
     if label is not None and not Sequence.query.filter_by(label=label, user_id=current_user.id).first():
         sequence = Sequence(label = label, user = current_user._get_current_object())
         for file in uploaded_files:
@@ -48,10 +50,14 @@ def new():
                 filename = secure_filename(file.filename)
                 # Move the file form the temporal folder to the upload folder we setup
                 #make user folder
-                directory = current_app.config['UPLOAD_DEFAULT_DEST'] + username + '/' + label + '/'
+                directory = current_app.config['UPLOAD_DEFAULT_DEST'] + username + '/' + label + '/' 
                 if not os.path.exists(directory):
-                    os.makedirs(directory)
+                    os.makedirs(directory + 'thumbs/')
                 file.save(directory + filename)
+                #create a thumbnail
+                image = Image.open(directory + filename)
+                image.thumbnail((158,116), Image.ANTIALIAS)
+                image.save(directory + 'thumbs/' + filename, 'JPEG', quality=88)
                 # Save the filename into a list, we'll use it later
                 filenames.append(filename)
                 #add photo to the database
@@ -72,13 +78,22 @@ def sequence(user, label):
     photos = Photo.query.filter_by(sequence_id=seq.id).all() 
     return render_template('sequence.html', label=label, user=user, sequence=seq, photos=photos)
 
-@main.route('/photo/<username>/<label>/<filename>', methods=['GET'])
+@main.route('/photo/<user>/<label>/<file>', methods=['GET'])
 @login_required
-def photo(username, label, filename):
+def photo(user, label, file):
     if id == None:
         abort(404)
-    photo = Photo.query.filter_by(file=filename).first()
-    filedir = current_app.config['UPLOAD_DEFAULT_DEST'] + username + '/' + label + '/' + photo.file
+    photo = Photo.query.filter_by(file=file).first()
+    filedir = current_app.config['UPLOAD_DEFAULT_DEST'] + user + '/' + label + '/' + photo.file
+    return send_file(filedir, mimetype='image/jpg')
+
+@main.route('/thumbnail/<user>/<label>/<file>', methods=['GET'])
+@login_required
+def thumbnail(user, label, file):
+    if id == None:
+        abort(404)
+    photo = Photo.query.filter_by(file=file).first()
+    filedir = current_app.config['UPLOAD_DEFAULT_DEST'] + user + '/' + label + '/thumbs/' + photo.file
     return send_file(filedir, mimetype='image/jpg')
 
 @main.route('/sequence/<user>/<label>/delete', methods=['GET','POST'])
@@ -86,8 +101,12 @@ def photo(username, label, filename):
 def delete(user, label):
     this_user = User.query.filter_by(username=user).first()
     sequence = Sequence.query.filter_by(user_id=this_user.id, label=label).first()
+    # delete the directory containing the photos
     if sequence is not None:
         db.session.delete(sequence)
         db.session.commit()
+        directory = current_app.config['UPLOAD_DEFAULT_DEST'] + user + '/' + label + '/'
+        shutil.rmtree(directory)
     	return redirect(url_for('.index'))
+    
     return redirect(url_for('.sequence', label=sequence.label, user=sequence.user))

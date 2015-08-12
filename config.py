@@ -8,7 +8,7 @@ class Config:
     WEBODM_MAIL_SENDER = 'WebODM Admin <dmb2@clevelandmetroparks.com>'
     WEBODM_ADMIN = os.environ.get('WEBODM_ADMIN')
     UPLOAD_DEFAULT_DEST = basedir + '/app/uploads/'
-    ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+    ALLOWED_EXTENSIONS = set(['jpg'])
 
     @staticmethod
     def init_app(app):

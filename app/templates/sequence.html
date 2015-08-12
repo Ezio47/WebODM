@@ -13,7 +13,7 @@
         <div class="cover-container">
             <!-- START PANEL -->
             {% for photo in photos %}
-            <div class="cover-item" style="background-image: url('../../photo/{{ user }}/{{ label }}/{{ photo.file }}"></div>
+            <a href={{ url_for('.photo', user = user, label = label, file = photo.file) }}><div class="cover-item" style="background-image: url('../../thumbnail/{{ user }}/{{ label }}/{{ photo.file }}"></div></a>
             {% endfor %}
         </div>
     </div>
